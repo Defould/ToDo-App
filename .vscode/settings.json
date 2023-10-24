@@ -1,3 +1,4 @@
 {
-	"cSpell.words": ["Ccircle", "Cpath", "Csvg", "todoapp", "задачи", "Перенести", "Реализовать", "состояния", "удаление"]
+	"editor.formatOnSave": false,
+	"editor.codeActionsOnSave": { "source.fixAll": true }
 }
