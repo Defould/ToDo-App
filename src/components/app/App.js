@@ -11,11 +11,7 @@ class App extends Component {
     super();
 
     this.state = {
-      todoData: [
-        this.createItem('Перенести задачи'),
-        this.createItem('Изменить состояния'),
-        this.createItem('Реализовать удаление'),
-      ],
+      todoData: [this.createItem('fw'), this.createItem('wf'), this.createItem('fw')],
       filter: 'all',
     };
   }
