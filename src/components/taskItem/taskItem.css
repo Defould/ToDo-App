@@ -85,6 +85,7 @@ label {
 }
 
 .icon-play {
+	cursor: pointer;
     font-size: 15px;
 }
 .icon-play::after {
@@ -92,6 +93,7 @@ label {
 }
 
 .icon-pause {
+	cursor: pointer;
     font-size: 18px;
 }
 .icon-pause::after {

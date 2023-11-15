@@ -1,39 +1,38 @@
-import React, { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 
 import './taskItem.css';
 
 function TaskItem(props) {
-  const { label, onDelete, onToggleDone, done, created, checked } = props;
-  const [timerRunning, setTimerRunning] = useState(false);
-  const [timeElapsed, setTimeElapsed] = useState(0);
-
-  useEffect(() => {
-    let timerInterval;
-
-    if (timerRunning) {
-      timerInterval = setInterval(() => {
-        setTimeElapsed((prevTime) => prevTime + 1);
-      }, 1000);
-    }
-
-    return () => clearInterval(timerInterval);
-  }, [timerRunning]);
-
-  useEffect(() => {
-    if (done) {
-      handleTimerOff();
-    }
-  }, [done]);
-
-  const handleTimerOn = () => {
-    setTimerRunning(true);
-  };
-  const handleTimerOff = () => {
-    setTimerRunning(false);
-  };
-
+  const { label, onDelete, onToggleDone, done, created, checked, time, startTimer, pauseTimer } = props;
   let classNames = done ? 'completed' : '';
+
+  const getPadTime = (time) => time.toString().padStart(2, '0');
+
+  const min = getPadTime(Math.floor(time / 60));
+  const sec = getPadTime(time - min * 60);
+
+  const timer = () => {
+    if (time)
+      return (
+        <>
+          <div className="timer-button">
+            <button className="icon-play" type="button" aria-label="play" onClick={startTimer} />
+            <button className="icon-pause" type="button" aria-label="pause" onClick={pauseTimer} />
+          </div>
+          <div className="timer">{`${min}:${sec}`}</div>
+        </>
+      );
+    if (time === 0) return <span className="time-over">Time over</span>;
+    return null;
+  };
+
+  // const handleStartTimer = () => {
+  //   startTimer(props.id);
+  // };
+
+  // const handlePauseTimer = () => {
+  //   pauseTimer(props.id);
+  // };
 
   return (
     <li className={classNames}>
@@ -44,14 +43,8 @@ function TaskItem(props) {
           <span className="description" onClick={onToggleDone}>
             {label}
           </span>
-          <span className="timer">
-            <button className="icon-play" onClick={handleTimerOn}></button>
-            <button className="icon-pause" onClick={handleTimerOff}></button>
-            {`${Math.floor(timeElapsed / 60)}:${(timeElapsed % 60).toLocaleString('en-US', {
-              minimumIntegerDigits: 2,
-              useGrouping: false,
-            })}`}
-          </span>
+          <span className="timer">{timer()}</span>
+
           <span className="created">created {formatDistanceToNow(created, { includeSeconds: true })} ago</span>
         </label>
         <button className="icon icon-edit"></button>

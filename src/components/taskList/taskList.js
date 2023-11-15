@@ -4,10 +4,19 @@ import './taskList.css';
 
 import TaskItem from '../taskItem/taskItem';
 
-function TaskList({ todoData, onDelete, onToggleDone }) {
+function TaskList({ todoData, onDelete, onToggleDone, startTimer, pauseTimer }) {
   const elements = todoData.map((item) => {
     const { id, ...props } = item;
-    return <TaskItem key={id} {...props} onDelete={() => onDelete(id)} onToggleDone={() => onToggleDone(id)} />;
+    return (
+      <TaskItem
+        key={id}
+        {...props}
+        onDelete={() => onDelete(id)}
+        onToggleDone={() => onToggleDone(id)}
+        startTimer={() => startTimer(id)}
+        pauseTimer={() => pauseTimer(id)}
+      />
+    );
   });
 
   return <ul className="todo-list">{elements}</ul>;

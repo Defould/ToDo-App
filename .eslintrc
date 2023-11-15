@@ -21,7 +21,7 @@
 	},
 	"plugins": ["react", "prettier", "import"],
 	"rules": {
-		"indent": ["error", 2,  { "SwitchCase": 1 }],
+		"indent": ["warn", 2,  { "SwitchCase": 1 }],
 		"prettier/prettier": ["warn", { "endOfLine": "auto" }],
 		"linebreak-style": [0, "unix"],
 		"quotes": ["error", "single"],
