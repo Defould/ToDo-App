@@ -4,50 +4,46 @@ import { PropTypes } from 'prop-types';
 import './newTaskForm.css';
 
 class NewTaskForm extends Component {
-  constructor() {
-    super();
+  state = {
+    label: '',
+    minutes: '',
+    seconds: '',
+  };
 
-    this.state = {
+  onChangeLabel = (e) => {
+    this.setState({
+      label: e.target.value,
+    });
+  };
+
+  onChangeTimerValue = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  onSubmit = (e) => {
+    e.preventDefault();
+
+    const { label, minutes, seconds } = this.state;
+    const { addItem } = this.props;
+
+    const min = Number(minutes.trim());
+    const sec = Number(seconds.trim());
+    let time = min * 60 + sec;
+
+    if (time === 0) {
+      time = null;
+    }
+
+    addItem(label, time);
+
+    this.setState({
       label: '',
       minutes: '',
       seconds: '',
-    };
-
-    this.onChangeLabel = (e) => {
-      this.setState({
-        label: e.target.value,
-      });
-    };
-
-    this.onChangeTimerValue = (event) => {
-      this.setState({
-        [event.target.name]: event.target.value,
-      });
-    };
-
-    this.onSubmit = (e) => {
-      e.preventDefault();
-
-      const { label, minutes, seconds } = this.state;
-      const { addItem } = this.props;
-
-      const min = Number(minutes.trim());
-      const sec = Number(seconds.trim());
-      let time = min * 60 + sec;
-
-      if (time === 0) {
-        time = null;
-      }
-
-      addItem(label, time);
-
-      this.setState({
-        label: '',
-        minutes: '',
-        seconds: '',
-      });
-    };
-  }
+    });
+  };
 
   render() {
     const { label, minutes, seconds } = this.state;
