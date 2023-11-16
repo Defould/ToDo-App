@@ -22,17 +22,9 @@ function TaskItem(props) {
           <div className="timer">{`${min}:${sec}`}</div>
         </>
       );
-    if (time === 0) return <span className="time-over">Time over</span>;
+    if (!time) return <span className="time-over">Time over</span>;
     return null;
   };
-
-  // const handleStartTimer = () => {
-  //   startTimer(props.id);
-  // };
-
-  // const handlePauseTimer = () => {
-  //   pauseTimer(props.id);
-  // };
 
   return (
     <li className={classNames}>
@@ -43,7 +35,7 @@ function TaskItem(props) {
           <span className="description" onClick={onToggleDone}>
             {label}
           </span>
-          <span className="timer">{timer()}</span>
+          <span className="timer-block">{timer()}</span>
 
           <span className="created">created {formatDistanceToNow(created, { includeSeconds: true })} ago</span>
         </label>

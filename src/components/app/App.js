@@ -7,35 +7,19 @@ import TaskList from '../taskList/taskList';
 import Footer from '../footer/footer';
 
 class App extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      todoData: [],
-      filter: 'all',
-    };
-  }
+  state = {
+    todoData: [],
+    filter: 'all',
+  };
 
   timers = {};
 
-  createItem = (text, time = null) => {
-    return {
-      label: text,
-      done: false,
-      checked: false,
-      created: new Date(),
-      id: Math.random().toString(36).slice(2),
-      time: time,
-      isTimerOn: false,
-    };
-  };
-
   addItem = (text, time) => {
     if (!text.trim()) return;
-    const newTask = this.createItem(text, time);
+    const newItem = this.createItem(text, time);
 
     this.setState(({ todoData }) => ({
-      todoData: [...todoData, newTask],
+      todoData: [...todoData, newItem],
     }));
   };
 
@@ -60,20 +44,9 @@ class App extends Component {
   onToggleDone = (id) => {
     this.pauseTimer(id);
 
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[idx];
-      const newItem = {
-        ...oldItem,
-        done: !oldItem.done,
-        checked: !oldItem.checked,
-      };
-      const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-
-      return {
-        todoData: newArr,
-      };
-    });
+    this.setState(({ todoData }) => ({
+      todoData: todoData.map((item) => (item.id === id ? { ...item, done: !item.done, checked: !item.checked } : item)),
+    }));
   };
 
   onFilter = (items, filter) => {
@@ -91,27 +64,22 @@ class App extends Component {
     this.setState({ filter });
   };
 
-  startTimer = (id) => {
-    // if (e) e.stopPropagation();
-
-    const idx = this.state.todoData.findIndex((el) => el.id === id);
-    if (idx === -1) return;
-    const task = this.state.todoData[idx];
-
-    if (Object.keys(this.timers).includes(id.toString())) return;
+  startTimer = (id, e) => {
+    if (e) e.stopPropagation();
 
     this.timers[id] = setInterval(() => {
-      if (!this.state.todoData[idx]) return;
-
       this.setState(({ todoData }) => {
+        const task = todoData.find((item) => item.id === id);
         task.time--;
+
         if (!task.time) {
-          clearInterval(this.timers[idx]);
-          delete this.timers[idx];
+          clearInterval(this.timers[id]);
+          delete this.timers[id];
           task.isTimerOn = false;
         } else {
           task.isTimerOn = true;
         }
+
         return {
           todoData: todoData.map((item) => (item.id === id ? task : item)),
         };
@@ -119,20 +87,29 @@ class App extends Component {
     }, 1000);
   };
 
-  pauseTimer = (id) => {
-    // if (e) e.stopPropagation();
+  pauseTimer = (id, e) => {
+    console.log('pause');
+    if (e) e.stopPropagation();
 
     clearInterval(this.timers[id]);
     delete this.timers[id];
 
+    // this.setState(({ todoData }) => {
+    //   const idx = todoData.findIndex((el) => el.id === id);
+    //   const oldTask = todoData[idx];
+    //   oldTask.isTimerOn = false;
+    //   const newTask = { ...oldTask };
+    //   const newArr = [...todoData.slice(0, idx), newTask, ...todoData.slice(idx + 1)];
+    //   return {
+    //     todoData: newArr,
+    //   };
+    // });
     this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const oldTask = todoData[idx];
-      oldTask.isTimerOn = false;
-      const newTask = { ...oldTask };
-      const newArr = [...todoData.slice(0, idx), newTask, ...todoData.slice(idx + 1)];
+      const idx = todoData.findIndex((task) => task.id === id);
+      const task = todoData[idx];
+      task.isTimerOn = false;
       return {
-        todoData: newArr,
+        todoData: todoData.map((item) => (item.id === id ? task : item)),
       };
     });
   };
@@ -143,10 +120,22 @@ class App extends Component {
 
     this.state.todoData.forEach((item) => {
       if (item.isTimerOn) {
-        this.timerOn(item.id);
+        this.startTimer(item.id);
       }
     });
   }
+
+  createItem = (text, time = null) => {
+    return {
+      label: text,
+      done: false,
+      checked: false,
+      created: new Date(),
+      id: Math.random().toString(36).slice(2),
+      time: time,
+      isTimerOn: false,
+    };
+  };
 
   render() {
     const { todoData, filter } = this.state;

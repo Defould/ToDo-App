@@ -1,8 +1,8 @@
 import { PropTypes } from 'prop-types';
 
-import './taskList.css';
-
 import TaskItem from '../taskItem/taskItem';
+
+import './taskList.css';
 
 function TaskList({ todoData, onDelete, onToggleDone, startTimer, pauseTimer }) {
   const elements = todoData.map((item) => {

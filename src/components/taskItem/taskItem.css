@@ -20,7 +20,7 @@ label {
 	cursor: pointer;
 }
 
-.todo-list li label .timer {
+.todo-list li label .timer-block {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
