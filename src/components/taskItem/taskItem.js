@@ -32,11 +32,8 @@ function TaskItem(props) {
         <input className="toggle" type="checkbox" checked={checked} onChange={onToggleDone} />
 
         <label>
-          <span className="description" onClick={onToggleDone}>
-            {label}
-          </span>
+          <span className="description">{label}</span>
           <span className="timer-block">{timer()}</span>
-
           <span className="created">created {formatDistanceToNow(created, { includeSeconds: true })} ago</span>
         </label>
         <button className="icon icon-edit"></button>
