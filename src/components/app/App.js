@@ -7,6 +7,8 @@ import TaskList from '../taskList/taskList';
 import Footer from '../footer/footer';
 
 class App extends Component {
+  minId = 0;
+
   state = {
     todoData: [],
     filter: 'all',
@@ -43,11 +45,11 @@ class App extends Component {
   onToggleDone = (id) => {
     this.pauseTimer(id);
     this.setState(({ todoData }) => ({
-      todoData: todoData.map((item) => (item.id === id ? { ...item, done: !item.done, checked: !item.done } : item)),
+      todoData: todoData.map((item) => (item.id === id ? { ...item, done: !item.done, checked: !item.checked } : item)),
     }));
   };
 
-  static onFilter = (items, filter) => {
+  onFilter = (items, filter) => {
     switch (filter) {
       case 'active':
         return items.filter((item) => !item.done);
@@ -69,7 +71,7 @@ class App extends Component {
       this.setState(({ todoData }) => {
         const task = todoData.find((item) => item.id === id);
         task.time--;
-
+        console.log(this.timers[id]);
         if (!task.time) {
           clearInterval(this.timers[id]);
           delete this.timers[id];
@@ -87,23 +89,30 @@ class App extends Component {
 
   pauseTimer = (id) => {
     clearInterval(this.timers[id]);
+    console.log(this.timers[id]);
     delete this.timers[id];
 
-    this.setState(({ todoData }) => ({
-      todoData: todoData.map((item) => (item.id === id ? { ...item, isTimerOn: false } : item)),
-    }));
+    if (Object.keys(this.timers).length === 0) {
+      this.setState({
+        todoData: this.state.todoData.map((item) => (item.isTimerOn ? { ...item, isTimerOn: false } : item)),
+      });
+    } else {
+      this.setState(({ todoData }) => ({
+        todoData: todoData.map((item) => (item.id === id ? { ...item, isTimerOn: false } : item)),
+      }));
+    }
   };
 
-  updateTimers() {
-    Object.values(this.timers).forEach((timer) => clearInterval(timer));
-    this.timers = {};
+  // updateTimers() {
+  //   Object.values(this.timers).forEach((timer) => clearInterval(timer));
+  //   this.timers = {};
 
-    this.state.todoData.forEach((task) => {
-      if (task.isTimerOn) {
-        this.startTimer(task.id);
-      }
-    });
-  }
+  //   this.state.todoData.forEach((task) => {
+  //     if (task.isTimerOn) {
+  //       this.startTimer(task.id);
+  //     }
+  //   });
+  // }
 
   createItem = (text, time = null) => {
     return {
@@ -111,7 +120,7 @@ class App extends Component {
       done: false,
       checked: false,
       created: new Date(),
-      id: Math.random().toString(36).slice(2),
+      id: this.minId++,
       time: time,
       isTimerOn: false,
     };
@@ -119,7 +128,7 @@ class App extends Component {
 
   render() {
     const { todoData, filter } = this.state;
-    const visibleData = App.onFilter(todoData, filter);
+    const visibleData = this.onFilter(todoData, filter);
     const doneCount = todoData.length - todoData.filter((el) => el.done === true).length;
 
     return (
