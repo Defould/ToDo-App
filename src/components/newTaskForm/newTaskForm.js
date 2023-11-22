@@ -1,32 +1,33 @@
-import { Component } from 'react';
-import { PropTypes } from 'prop-types';
+import { useState } from 'react';
 
 import './newTaskForm.css';
 
-class NewTaskForm extends Component {
-  state = {
+const NewTaskForm = (props) => {
+  const [task, setTask] = useState({
     label: '',
     minutes: '',
     seconds: '',
-  };
+  });
 
-  onChangeLabel = (e) => {
-    this.setState({
+  const onChangeLabel = (e) => {
+    setTask({
+      ...task,
       label: e.target.value,
     });
   };
 
-  onChangeTimerValue = (event) => {
-    this.setState({
+  const onChangeTimerValue = (event) => {
+    setTask({
+      ...task,
       [event.target.name]: event.target.value,
     });
   };
 
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
 
-    const { label, minutes, seconds } = this.state;
-    const { addItem } = this.props;
+    const { label, minutes, seconds } = task;
+    const { addItem } = props;
 
     const min = Number(minutes.trim());
     const sec = Number(seconds.trim());
@@ -38,53 +39,43 @@ class NewTaskForm extends Component {
 
     addItem(label, time);
 
-    this.setState({
+    setTask({
       label: '',
       minutes: '',
       seconds: '',
     });
   };
 
-  render() {
-    const { label, minutes, seconds } = this.state;
+  const { label, minutes, seconds } = task;
 
-    return (
-      <form className="form" onSubmit={this.onSubmit}>
-        <input
-          className="new-todo"
-          placeholder="What needs to be done?"
-          value={label}
-          autoFocus
-          onChange={this.onChangeLabel}
-        />
-        <input
-          className="new-todo-form__timer"
-          placeholder="Min"
-          name="minutes"
-          value={minutes}
-          type="number"
-          onChange={this.onChangeTimerValue}
-        />
-        <input
-          className="new-todo-form__timer"
-          placeholder="Sec"
-          name="seconds"
-          value={seconds}
-          type="number"
-          onChange={this.onChangeTimerValue}
-        />
-        <input type="submit" style={{ display: 'none' }} />
-      </form>
-    );
-  }
-
-  static defaultProps = {
-    addItem: () => {},
-  };
-
-  static propTypes = {
-    addItem: PropTypes.func,
-  };
-}
+  return (
+    <form className="form" onSubmit={onSubmit}>
+      <input
+        className="new-todo"
+        placeholder="What needs to be done?"
+        value={label}
+        autoFocus
+        onChange={onChangeLabel}
+      />
+      <input
+        className="new-todo-form__timer"
+        placeholder="Min"
+        name="minutes"
+        value={minutes}
+        type="number"
+        onChange={onChangeTimerValue}
+      />
+      <input
+        className="new-todo-form__timer"
+        placeholder="Sec"
+        name="seconds"
+        value={seconds}
+        type="number"
+        onChange={onChangeTimerValue}
+      />
+      <input type="submit" style={{ display: 'none' }} />
+    </form>
+  );
+};
 
 export default NewTaskForm;
