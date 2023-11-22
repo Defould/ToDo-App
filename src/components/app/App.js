@@ -6,11 +6,6 @@ import NewTaskForm from '../newTaskForm/newTaskForm';
 import TaskList from '../taskList/taskList';
 
 const App = () => {
-  // state = {
-  //   todoData: [],
-  //   filter: 'all',
-  // };
-
   const [todoData, setTodoData] = useState([]);
   const [filter, setFilter] = useState('all');
 
