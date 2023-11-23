@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { nanoid } from 'nanoid';
+
 import './App.css';
 
 import Footer from '../footer/footer';
@@ -6,39 +8,34 @@ import NewTaskForm from '../newTaskForm/newTaskForm';
 import TaskList from '../taskList/taskList';
 
 const App = () => {
-  // state = {
-  //   todoData: [],
-  //   filter: 'all',
-  // };
-
   const [todoData, setTodoData] = useState([]);
   const [filter, setFilter] = useState('all');
 
   let timers = {};
 
+  useEffect(() => {
+    updateTimers();
+    return () => {
+      Object.values(timers).forEach((timer) => clearInterval(timer));
+      timers = {};
+    };
+  }, [todoData]);
+
   const addItem = (text, time) => {
     if (!text.trim()) return;
     const newItem = createItem(text, time);
 
-    setTodoData((todoData) => ({
-      todoData: [...todoData, newItem],
-    }));
+    setTodoData((todoData) => [...todoData, newItem]);
   };
 
   const deleteItem = (id) => {
-    clearInterval(timers[id]);
-    delete timers[id];
+    pauseTimer(id);
 
-    setTodoData(
-      ({ todoData }) => ({
-        todoData: todoData.filter((task) => task.id !== id),
-      }),
-      updateTimers
-    );
+    setTodoData((todoData) => todoData.filter((task) => task.id !== id));
   };
 
   const deleteCompleted = () => {
-    const complitedTasks = todoData.filter((task) => task.done);
+    const complitedTasks = todoData.filter((task) => task.done === true);
     complitedTasks.forEach((task) => deleteItem(task.id));
   };
 
@@ -68,7 +65,7 @@ const App = () => {
     if (Object.keys(timers).includes(id.toString())) return;
 
     timers[id] = setInterval(() => {
-      setTodoData(({ todoData }) => {
+      setTodoData((todoData) => {
         const task = todoData.find((item) => item.id === id);
         task.time--;
 
@@ -80,9 +77,7 @@ const App = () => {
           task.isTimerOn = true;
         }
 
-        return {
-          todoData: todoData.map((item) => (item.id === id ? task : item)),
-        };
+        return todoData.map((item) => (item.id === id ? task : item));
       });
     }, 1000);
   };
@@ -90,10 +85,9 @@ const App = () => {
   const pauseTimer = (id) => {
     clearInterval(timers[id]);
     delete timers[id];
+    console.log('pause');
 
-    setTodoData(({ todoData }) => ({
-      todoData: todoData.map((item) => (item.id === id ? { ...item, isTimerOn: false } : item)),
-    }));
+    setTodoData((todoData) => todoData.map((item) => (item.id === id ? { ...item, isTimerOn: false } : item)));
   };
 
   const updateTimers = () => {
@@ -113,7 +107,7 @@ const App = () => {
       done: false,
       checked: false,
       created: new Date(),
-      id: Math.random().toString(36).slice(2),
+      id: nanoid(),
       time: time,
       isTimerOn: false,
     };
