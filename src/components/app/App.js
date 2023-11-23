@@ -85,7 +85,6 @@ const App = () => {
   const pauseTimer = (id) => {
     clearInterval(timers[id]);
     delete timers[id];
-    console.log('pause');
 
     setTodoData((todoData) => todoData.map((item) => (item.id === id ? { ...item, isTimerOn: false } : item)));
   };
