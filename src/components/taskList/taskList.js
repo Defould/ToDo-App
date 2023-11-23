@@ -7,6 +7,7 @@ import './taskList.css';
 function TaskList({ todoData, onDelete, onToggleDone, startTimer, pauseTimer }) {
   const elements = todoData.map((item) => {
     const { id, ...props } = item;
+    console.log(id);
     return (
       <TaskItem
         key={id}
